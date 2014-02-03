@@ -7,8 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div id="content"></div>
-<ul id="events"></ul>
+
 <!--Add a button for the user to click to initiate auth sequence -->
 <button id="authorize-button" style="visibility: hidden">Authorize</button>
 
@@ -17,8 +16,13 @@
     {{outlet}}
 </script>
 
-<script type="text/x-handlebars" id="calendar">
+<script type="text/x-handlebars" id="events/new">
+    <h2>Events</h2>
+</script>
+
+<script type="text/x-handlebars" id="room">
     <h2>{{model.summary}}</h2>
+    <a href="/room">Add event</a>
     {{#each day in model.days}}
         <h3>{{day.description}}</h3>
         <dl>

@@ -1,12 +1,15 @@
 function initApp () {
 
-    App = Ember.Application.create();
-
-    App.Router.map(function() {
-        this.resource('calendar', { path: '/room/:room_id'});
+    App = Ember.Application.create({
+        LOG_TRANSITIONS: true
     });
 
-    App.CalendarRoute = Ember.Route.extend({
+    App.Router.map(function() {
+        this.resource('room', { path: '/room/:room_id'});
+        this.resource('event', { path: '/room/:room_id/events'});
+    });
+
+    App.RoomRoute = Ember.Route.extend({
         model: function(params) {
             return new Ember.RSVP.Promise(function(resolve, reject) {
                 gapi.client.load('calendar', 'v3', function() {
@@ -55,6 +58,34 @@ function initApp () {
             controller.set('model', {
                 summary: model.summary,
                 days: days
+            });
+        }
+    });
+
+    App.EventRoute = Ember.Route.extend({
+        model: function(params) {
+            return new Ember.RSVP.Promise(function(resolve, reject) {
+                gapi.client.load('calendar', 'v3', function() {
+                    var request = gapi.client.calendar.events.insert({
+                        'calendarId': params.room_id,
+                        'resource': {
+                            'end': {
+                                dateTime: '2014-02-03T20:30:00-03:00'
+                            },
+                            'start': {
+                                dateTime: '2014-02-03T19:30:00-03:00'
+                            }
+                        }
+                    });
+
+                    request.execute(function(resp) {
+                        if (!resp || resp.error ) {
+                            Ember.run(null, reject, resp.error);
+                        } else {
+                            Ember.run(null, resolve, resp);
+                        }
+                    });
+                });
             });
         }
     });
