@@ -26,50 +26,33 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" href="#">{{model.title}}</a>
                 </div>
-                {{#unless model.is_editing }}
                 <ul class="nav navbar-nav navbar-right nav-pills">
                     <li><button type="button" class="btn btn-default navbar-btn">
                         <span class="glyphicon glyphicon-plus"></span> Add event
                     </button></li>
                 </ul>
-                {{/unless}}
             </div>
         </div>
 
         {{outlet}}
     </script>
 
-    <script type="text/x-handlebars" data-template-name="events/index">
+    <script type="text/x-handlebars" data-template-name="calendar.index">
         <div class="container theme-showcase" role="main">
             <div class="col-sm-12">
+                {{#each day in days.days}}
+                {{day.description}}
                 <div class="list-group">
-                {{#each event in model.events}}
-                    <a href="#" class="list-group-item">
-                        <h4 class="list-group-item-heading">{{event}}</h4>
-                    </a>
+                {{#each event in day.events}}
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">{{event.summary}}</h4>
+                            <p class="list-group-item-text">{{event.description}}</p>
+                            <p class="list-group-item-text">{{event.location}}</p>
+                            <p class="list-group-item-text">{{format-date "HH:mm" event.start}} - {{format-date "HH:mm" event.end}}</p>
+                        </a>
                 {{/each}}
                 </div>
-            </div>
-        </div>
-    </script>
-
-    <script type="text/x-handlebars" data-template-name="event/edit">
-        {{partial "event/form"}}
-    </script>
-
-    <script type="text/x-handlebars" data-template-name="events/new">
-        {{partial "event/form"}}
-    </script>
-
-    <script type="text/x-handlebars" data-template-name="event/_form">
-        <div class="container theme-showcase" role="main">
-            <div class="col-sm-12">
-                <form class="form" role="form">
-                    {{input class="form-control" placeholder="Summary" valueBinding="model"}}
-                    <!--<input class="form-control" placeholder="Summary" required="" autofocus="">-->
-                    <button class="btn btn-lg btn-primary btn-block"
-                    {{action submitAction target="controller"}}>Add event</button>
-                </form>
+                {{/each}}
             </div>
         </div>
     </script>
