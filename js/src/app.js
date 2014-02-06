@@ -1,61 +1,78 @@
-function initApp () {
+function initApp() {
 
-    App = Ember.Application.create();
+    App = Ember.Application.create({
+        LOG_TRANSITIONS: true
+    });
 
-    App.Router.map(function() {
-        this.resource('calendar', { path: '/room/:room_id'});
+    App.Router.map(function () {
+        this.resource("calendar", { path: "/:calendar_id" }, function() {
+            this.resource("events", { path: "/" }, function() {
+                this.resource("event", { path: "/:event_id" }, function() {
+                    this.route("edit", { path: "/edit" });
+                });
+                this.route("new", { path: "/new" });
+            });
+        });
     });
 
     App.CalendarRoute = Ember.Route.extend({
-        model: function(params) {
-            return new Ember.RSVP.Promise(function(resolve, reject) {
-                gapi.client.load('calendar', 'v3', function() {
-                    var request = gapi.client.calendar.events.list({
-                        'calendarId': params.room_id,
-                        'timeMin': new Date(),
-                        'timeMax': (function() {
-                            var dt = new Date();
-                            dt.setDate(dt.getDate() + 7);
-                            return dt;
-                        })(),
-                        'singleEvents': true,
-                        'orderBy': 'startTime'
-                    });
+        model: function (params) {
+            //Gerar menu
+            console.log('CalendarRoute');
+            return {
+                title: 'Pagu'
+            };
+        }
+    });
 
-                    request.execute(function(resp) {
-                        if (!resp || resp.error ) {
-                            Ember.run(null, reject, resp.error);
-                        } else {
-                            Ember.run(null, resolve, resp);
-                        }
-                    });
-                });
-            });
-        },
-        setupController: function(controller, model) {
-            model.items.forEach(function(item) {
-                var startDate = item.start.date || item.start.dateTime;
-                var endDate = item.end.date || item.end.dateTime;
-                //TODO: format startDate
-                item.startDate = new Date(startDate).toString('dddd, MMMM d');
-                item.endDate = new Date(endDate).toString('MMMM d');
-                item.startTime = new Date(startDate).toString('HH:mm');
-                item.endTime = new Date(endDate).toString('HH:mm');
-            });
+    App.EventsIndexRoute = Ember.Route.extend({
+        model: function (params) {
+            //Listar eventos
+            console.log('EventsIndexRoute');
+            var model = this.modelFor('calendar');
+            model.events = ['event1', 'event2'];
+            return model;
+        }
+    });
 
-            var days = model.items.reduce(function(days,event){
-                if (days[days.length-1] && event.startDate === days[days.length-1].events[0].startDate) {
-                    days[days.length-1].events.push(event);
-                } else {
-                    days.push({description: event.startDate, events: [event]})
-                }
-                return days;
-            }, []);
+    App.EventRoute = Ember.Route.extend({
+        model: function (params) {
+            //Retorna o evento para edit
+            console.log('EventRoute');
+            return 'edit_event';
+        }
+    });
 
-            controller.set('model', {
-                summary: model.summary,
-                days: days
-            });
+    App.EventEditRoute = Ember.Route.extend({
+        model: function (params) {
+            //Abre formulário para editar evento
+            console.log('EventEditRoute');
+            this.modelFor('calendar').is_editing = true;
+            return this.modelFor('event');
+        }
+    });
+
+    App.EventsNewRoute = Ember.Route.extend({
+        model: function (params) {
+            //Abre formulário para criar o evento
+            console.log('EventsNewRoute');
+            return 'new_event';
+        }
+    });
+
+    App.EventEditController = Ember.ObjectController.extend({
+        actions: {
+            submitAction : function() {
+                console.log("now we can edit the model:" + this.get("model"));
+            }
+        }
+    });
+
+    App.EventsNewController = Ember.ObjectController.extend({
+        actions: {
+            submitAction : function() {
+                console.log("now we can add the model:" + this.get("model"));
+            }
         }
     });
 }
