@@ -4,12 +4,14 @@
     <meta charset="utf-8">
     <!--Bootstrap-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <title>Room Scheduler</title>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="css/style.css">-->
+
 </head>
 
 <body role="document" style="padding-top: 40px;">
@@ -23,15 +25,21 @@
     <script type="text/x-handlebars" data-template-name="calendar">
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container">
-                <div class="navbar-header">
+                <div class="navbar-header pull-left">
                     <a class="navbar-brand" href="#">{{model.title}}</a>
+
                 </div>
+
                 {{#unless model.is_editing }}
-                <ul class="nav navbar-nav navbar-right nav-pills">
-                    <li><button type="button" class="btn btn-default navbar-btn">
+
+                <ul class="nav pull-right">
+                    <li>
+                        <button type="button" class="btn btn-default navbar-btn">
                         <span class="glyphicon glyphicon-plus"></span> Add event
-                    </button></li>
+                    </button>
+                    </li>
                 </ul>
+
                 {{/unless}}
             </div>
         </div>
