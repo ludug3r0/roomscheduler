@@ -70,14 +70,6 @@ function initApp() {
         }
     });
 
-    App.EventRoute = Ember.Route.extend({
-        model: function (params) {
-            //Retorna o evento para edit
-            console.log('EventRoute');
-            return 'edit_event';
-        }
-    });
-
     App.EventEditRoute = Ember.Route.extend({
         model: function (params) {
             //Abre formulário para editar evento
@@ -91,11 +83,15 @@ function initApp() {
         model: function (params) {
             //Abre formulário para criar o evento
             console.log('EventsNewRoute');
-            return 'new_event';
+            return {
+                //TODO: define standard event to be created
+                summary: "New Event",
+                description: "New Event description"
+            };
         }
     });
 
-    App.EventEditController = Ember.ObjectController.extend({
+    App.EventEditController = Ember.Controller.extend({
         actions: {
             submitAction : function() {
                 console.log("now we can edit the model:" + this.get("model"));
@@ -103,34 +99,32 @@ function initApp() {
         }
     });
 
-    App.EventsNewController = Ember.ObjectController.extend({
+    App.EventsNewController = Ember.Controller.extend({
         actions: {
             submitAction : function(event) {
-//                var event = this.get("model");
-//                var calendar = this.modelFor("calendar");
-//                console.log(calendar);
-                var event = {};
-                event.calendar_id = 'primary'
-                event.summary = 'Summary'
-                event.description = 'Description Lorem ipsum'
-                event.endDate = '2014-02-07T20:30:00-03:00'
-                event.startDate = '2014-02-07T19:30:00-03:00'
+                var calendarId = this.controllerFor('calendar').get('model').id;
+                var newEvent = {};
+                newEvent.calendar_id = calendarId;
+                newEvent.summary = 'Summary'
+                newEvent.description = 'Description Lorem ipsum'
+                newEvent.endDate = '2014-02-07T20:30:00-03:00'
+                newEvent.startDate = '2014-02-07T19:30:00-03:00'
                 console.log("now we can add the model:");
-                console.log(event);
+                console.log(newEvent);
                 return new Ember.RSVP.Promise(function (resolve, reject) {
                     gapi.client.load('calendar', 'v3', function () {
                         var request = gapi.client.calendar.events.insert({
-                            'calendarId': event.calendar_id,
+                            'calendarId': newEvent.calendar_id,
                             'resource': {
-                                'summary': event.summary,
-                                'description': event.description,
+                                'summary': newEvent.summary,
+                                'description': newEvent.description,
                                 'end': {
 //                                    dateTime: '2014-02-03T20:30:00-03:00'
-                                    dateTime: event.endDate
+                                    dateTime: newEvent.endDate
                                 },
                                 'start': {
 //                                    dateTime: '2014-02-03T19:30:00-03:00'
-                                    dateTime: event.startDate
+                                    dateTime: newEvent.startDate
                                 }
                             }
                         });
