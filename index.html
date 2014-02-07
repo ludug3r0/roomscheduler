@@ -27,16 +27,16 @@
             <div class="container">
                 <div class="navbar-header pull-left">
                     <a class="navbar-brand" href="#">{{model.title}}</a>
-
                 </div>
 
                 {{#unless model.is_editing }}
 
                 <ul class="nav pull-right">
                     <li>
-                        <button type="button" class="btn btn-default navbar-btn">
-                        <span class="glyphicon glyphicon-plus"></span> Add event
-                    </button>
+                        {{#link-to 'events.new' model.title class="btn btn-default navbar-btn"}}
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Add event
+                        {{/link-to}}
                     </li>
                 </ul>
 
