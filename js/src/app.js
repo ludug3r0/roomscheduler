@@ -19,9 +19,21 @@ function initApp() {
         model: function (params) {
             //Gerar menu
             console.log('CalendarRoute');
-            return {
-                title: 'Pagu'
-            };
+            return new Ember.RSVP.Promise(function (resolve, reject) {
+                gapi.client.load('calendar', 'v3', function () {
+                    var request = gapi.client.calendar.calendars.get({
+                        'calendarId': params.calendar_id
+                    });
+
+                    request.execute(function (resp) {
+                        if (!resp || resp.error) {
+                            Ember.run(null, reject, resp.error);
+                        } else {
+                            Ember.run(null, resolve, resp);
+                        }
+                    });
+                });
+            });
         }
     });
 
@@ -29,9 +41,31 @@ function initApp() {
         model: function (params) {
             //Listar eventos
             console.log('EventsIndexRoute');
-            var model = this.modelFor('calendar');
-            model.events = ['event1', 'event2'];
-            return model;
+            var calendarModel = this.modelFor('calendar');
+
+            return new Ember.RSVP.Promise(function (resolve, reject) {
+                gapi.client.load('calendar', 'v3', function () {
+                    var request = gapi.client.calendar.events.list({
+                        'calendarId': calendarModel.id,
+                        'timeMin': new Date(),
+                        'timeMax': (function () {
+                            var dt = new Date();
+                            dt.setDate(dt.getDate() + 7);
+                            return dt;
+                        })(),
+                        'singleEvents': true,
+                        'orderBy': 'startTime'
+                    });
+
+                    request.execute(function (resp) {
+                        if (!resp || resp.error) {
+                            Ember.run(null, reject, resp.error);
+                        } else {
+                            Ember.run(null, resolve, resp);
+                        }
+                    });
+                });
+            });
         }
     });
 
@@ -70,10 +104,58 @@ function initApp() {
 
     App.EventsNewController = Ember.ObjectController.extend({
         actions: {
-            submitAction : function() {
-                console.log("now we can add the model:" + this.get("model"));
+            submitAction : function(event) {
+//                var event = this.get("model");
+//                var calendar = this.modelFor("calendar");
+//                console.log(calendar);
+                var event = {};
+                event.calendar_id = 'primary'
+                event.summary = 'Summary'
+                event.description = 'Description Lorem ipsum'
+                event.endDate = '2014-02-07T20:30:00-03:00'
+                event.startDate = '2014-02-07T19:30:00-03:00'
+                console.log("now we can add the model:");
+                console.log(event);
+                return new Ember.RSVP.Promise(function (resolve, reject) {
+                    gapi.client.load('calendar', 'v3', function () {
+                        var request = gapi.client.calendar.events.insert({
+                            'calendarId': event.calendar_id,
+                            'resource': {
+                                'summary': event.summary,
+                                'description': event.description,
+                                'end': {
+//                                    dateTime: '2014-02-03T20:30:00-03:00'
+                                    dateTime: event.endDate
+                                },
+                                'start': {
+//                                    dateTime: '2014-02-03T19:30:00-03:00'
+                                    dateTime: event.startDate
+                                }
+                            }
+                        });
+
+                        request.execute(function (resp) {
+                            if (!resp || resp.error) {
+                                console.log('EventsNewController.submitAction.error');
+                                console.log(resp);
+                                Ember.run(null, reject, resp.error);
+//                                this.transitionToRoute('new');
+                            } else {
+                                console.log('EventsNewController.submitAction.success');
+                                console.log(resp);
+                                Ember.run(null, resolve, resp);
+                                return true;
+//                                this.transitionToRoute('calendar');
+                            }
+                        });
+                    });
+                });
             }
         }
+    });
+
+    Ember.Handlebars.registerBoundHelper('format-date', function(format, date) {
+        return moment(date).format(format);
     });
 }
 
