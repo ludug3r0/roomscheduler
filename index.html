@@ -26,7 +26,7 @@
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container">
                 <div class="navbar-header pull-left">
-                    <a class="navbar-brand" href="#">{{model.id}}</a>
+                    <a class="navbar-brand" href=#">{{model.id}}</a>
                 </div>
 
                 {{#unless model.is_editing }}
@@ -50,12 +50,12 @@
             <div class="col-sm-12">
                 <div class="list-group">
                 {{#each event in model.items}}
-                    <a href="#" class="list-group-item">
+                    {{#link-to 'event.edit' this.calendar_id event class="list-group-item"}}
                         <h4 class="list-group-item-heading">{{event.summary}}</h4>
                         <p class="list-group-item-text">{{event.description}}</p>
                         <p class="list-group-item-text">{{event.location}}</p>
                         <p class="list-group-item-text">{{format-date "HH:mm" event.start.dateTime}} - {{format-date "HH:mm" event.end.dateTime}}</p>
-                    </a>
+                    {{/link-to}}
                 {{/each}}
                 </div>
             </div>

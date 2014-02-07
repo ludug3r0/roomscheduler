@@ -61,6 +61,7 @@ function initApp() {
                         if (!resp || resp.error) {
                             Ember.run(null, reject, resp.error);
                         } else {
+                            resp.calendar_id = calendarModel.id;
                             Ember.run(null, resolve, resp);
                         }
                     });
