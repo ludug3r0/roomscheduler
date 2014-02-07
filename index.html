@@ -81,8 +81,19 @@
                     </div>
 
                     <div class="form-group">
-                    {{input class="form-control" placeholder="Description" valueBinding="model.description"}}
+                    {{textarea class="form-control" placeholder="Description" valueBinding="model.description"}}
                     </div>
+
+                    <div class="form-group form-inline">
+                        {{input type="date" class="form-control" placeholder="Description" valueBinding="model.startDate"}}
+                        {{input type="time" class="form-control" placeholder="Description" valueBinding="model.startTime"}}
+                    </div>
+
+                    <div class="form-group form-inline">
+                        {{input type="date" class="form-control" placeholder="Description" valueBinding="model.endDate"}}
+                        {{input type="time" class="form-control" placeholder="Description" valueBinding="model.endTime"}}
+                    </div>
+
                     <button {{action 'submitAction'}} class="btn btn-lg btn-primary btn-block">
                     Add event
                     </button>

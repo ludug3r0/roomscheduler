@@ -83,10 +83,16 @@ function initApp() {
         model: function (params) {
             //Abre formulário para criar o evento
             console.log('EventsNewRoute');
+            var startDateTime = new Date();
+            var endDateTime = new Date();
+            endDateTime.setMinutes(endDateTime.getMinutes() + 30);
             return {
-                //TODO: define standard event to be created
-                summary: "New Event",
-                description: "New Event description"
+                summary: "Default summary",
+                description: "Default description",
+                startDate: startDateTime,
+                endDate: endDateTime,
+                startTime: startDateTime.getTime(),
+                endTime: endDateTime.getTime()
             };
         }
     });
@@ -103,18 +109,15 @@ function initApp() {
         actions: {
             submitAction : function(event) {
                 var calendarId = this.controllerFor('calendar').get('model').id;
-                var newEvent = {};
-                newEvent.calendar_id = calendarId;
-                newEvent.summary = 'Summary'
-                newEvent.description = 'Description Lorem ipsum'
-                newEvent.endDate = '2014-02-07T20:30:00-03:00'
-                newEvent.startDate = '2014-02-07T19:30:00-03:00'
+                var newEvent = this.get('model');
+                newEvent.endDate = '2014-02-07T20:30:00-03:00';
+                newEvent.startDate = '2014-02-07T19:30:00-03:00';
                 console.log("now we can add the model:");
                 console.log(newEvent);
                 return new Ember.RSVP.Promise(function (resolve, reject) {
                     gapi.client.load('calendar', 'v3', function () {
                         var request = gapi.client.calendar.events.insert({
-                            'calendarId': newEvent.calendar_id,
+                            'calendarId': calendarId,
                             'resource': {
                                 'summary': newEvent.summary,
                                 'description': newEvent.description,
