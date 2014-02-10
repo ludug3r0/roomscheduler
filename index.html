@@ -34,7 +34,7 @@
                 {{#unless model.is_editing }}
                 <ul class="nav pull-right">
                     <li>
-                        {{#link-to 'events.new' this class="btn btn-default navbar-btn"}}
+                        {{#link-to 'events.new' class="btn btn-default navbar-btn"}}
                         <span class="glyphicon glyphicon-plus"></span>
                         Add event
                         {{/link-to}}
@@ -61,6 +61,28 @@
                 {{/each}}
                 </div>
             </div>
+        </div>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="error">
+        <div class="col-sm-12">
+            <div class="alert alert-danger">
+                <strong>Oh snap!</strong> Something bad happened (and we don't know what yet). Try refreshing.
+            </div>
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong>Code:</strong> {{model.code}}</h3>
+                </div>
+                <div class="panel-body">
+                    <strong>Message:</strong> {{model.message}}
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="loading">
+        <div class="col-sm-12">
+            <img src="res/loading.gif" alt="Loading">
         </div>
     </script>
 

@@ -94,26 +94,13 @@ function initApp() {
                 startTime: startDateTime.getTime(),
                 endTime: endDateTime.getTime()
             };
-        }
-    });
-
-    App.EventEditController = Ember.Controller.extend({
-        actions: {
-            submitAction : function() {
-                console.log("now we can edit the model:" + this.get("model"));
-            }
-        }
-    });
-
-    App.EventsNewController = Ember.Controller.extend({
+        },
         actions: {
             submitAction : function(event) {
                 var calendarId = this.controllerFor('calendar').get('model').id;
                 var newEvent = this.get('model');
-                newEvent.endDate = '2014-02-07T20:30:00-03:00';
-                newEvent.startDate = '2014-02-07T19:30:00-03:00';
-                console.log("now we can add the model:");
-                console.log(newEvent);
+                newEvent.endDate = '2014-02-10T20:30:00-03:00';
+                newEvent.startDate = '2014-02-10T19:30:00-03:00';
                 return new Ember.RSVP.Promise(function (resolve, reject) {
                     gapi.client.load('calendar', 'v3', function () {
                         var request = gapi.client.calendar.events.insert({
@@ -122,11 +109,9 @@ function initApp() {
                                 'summary': newEvent.summary,
                                 'description': newEvent.description,
                                 'end': {
-//                                    dateTime: '2014-02-03T20:30:00-03:00'
                                     dateTime: newEvent.endDate
                                 },
                                 'start': {
-//                                    dateTime: '2014-02-03T19:30:00-03:00'
                                     dateTime: newEvent.startDate
                                 }
                             }
@@ -134,20 +119,21 @@ function initApp() {
 
                         request.execute(function (resp) {
                             if (!resp || resp.error) {
-                                console.log('EventsNewController.submitAction.error');
-                                console.log(resp);
                                 Ember.run(null, reject, resp.error);
-//                                this.transitionToRoute('new');
                             } else {
-                                console.log('EventsNewController.submitAction.success');
-                                console.log(resp);
                                 Ember.run(null, resolve, resp);
-                                return true;
-//                                this.transitionToRoute('calendar');
                             }
                         });
                     });
                 });
+            }
+        }
+    });
+
+    App.EventEditController = Ember.Controller.extend({
+        actions: {
+            submitAction : function() {
+                console.log("now we can edit the model:" + this.get("model"));
             }
         }
     });
